@@ -1,0 +1,89 @@
+{
+  "manifest_version": 3,
+  "name": "GhostHub",
+  "version": "1.0.0",
+  "description": "Turn chat chaos into GitHub issues — automatically, privately, instantly. Monitor Slack, Discord, and WhatsApp Web messages and create GitHub issues.",
+  "author": "ch-uppp",
+  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "https://app.slack.com/*",
+    "https://*.slack.com/*",
+    "https://discord.com/*",
+    "https://*.discord.com/*",
+    "https://web.whatsapp.com/*",
+    "https://api.github.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "https://app.slack.com/*",
+        "https://*.slack.com/*"
+      ],
+      "js": ["content-scripts/slack.js"],
+      "css": ["content-scripts/slack.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://discord.com/*",
+        "https://*.discord.com/*"
+      ],
+      "js": ["content-scripts/discord.js"],
+      "css": ["content-scripts/discord.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://web.whatsapp.com/*"
+      ],
+      "js": ["content-scripts/whatsapp.js"],
+      "css": ["content-scripts/whatsapp.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "assets/*"],
+      "matches": [
+        "https://app.slack.com/*",
+        "https://*.slack.com/*",
+        "https://discord.com/*",
+        "https://*.discord.com/*",
+        "https://web.whatsapp.com/*"
+      ]
+    }
+  ],
+  
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'"
+  }
+}
