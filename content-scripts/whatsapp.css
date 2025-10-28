@@ -1,0 +1,18 @@
+/**
+ * GhostHub WhatsApp Styles
+ * 
+ * Minimal styles for GhostHub integration with WhatsApp Web
+ */
+
+/* Marker for detected actionable messages (optional, for debugging) */
+.ghosthub-actionable {
+  /* This class can be added to messages detected as actionable */
+  /* border-left: 2px solid #25d366; */
+}
+
+/* Ensure GhostHub elements don't interfere with WhatsApp's layout */
+.ghosthub-overlay {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+}
