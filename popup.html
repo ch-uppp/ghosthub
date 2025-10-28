@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostHub - Settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🦊 GhostHub</h1>
+      <p class="subtitle">GitHub Integration Settings</p>
+    </header>
+
+    <!-- Authentication Section -->
+    <section id="auth-section" class="section">
+      <h2>Authentication</h2>
+      
+      <div id="not-authenticated" class="auth-status">
+        <p class="info">Connect your GitHub account to start creating issues.</p>
+        
+        <div class="form-group">
+          <label for="token-input">Personal Access Token:</label>
+          <input 
+            type="password" 
+            id="token-input" 
+            placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+            autocomplete="off"
+          >
+          <small class="help-text">
+            Generate a token at 
+            <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings</a>
+            with 'repo' scope.
+          </small>
+        </div>
+        
+        <button id="verify-btn" class="btn btn-primary">Verify & Save Token</button>
+      </div>
+
+      <div id="authenticated" class="auth-status" style="display: none;">
+        <div class="user-info">
+          <img id="user-avatar" src="" alt="User avatar" class="avatar">
+          <div class="user-details">
+            <div id="user-name" class="user-name"></div>
+            <div id="user-login" class="user-login"></div>
+          </div>
+        </div>
+        <button id="disconnect-btn" class="btn btn-secondary">Disconnect</button>
+      </div>
+
+      <div id="auth-error" class="error-message" style="display: none;"></div>
+    </section>
+
+    <!-- Repository Selection Section -->
+    <section id="repo-section" class="section" style="display: none;">
+      <h2>Repository</h2>
+      
+      <div class="form-group">
+        <label for="repo-select">Select Repository:</label>
+        <select id="repo-select" class="form-select">
+          <option value="">Loading repositories...</option>
+        </select>
+        <small class="help-text">Choose where to create issues.</small>
+      </div>
+
+      <button id="save-repo-btn" class="btn btn-primary">Save Repository</button>
+      
+      <div id="repo-success" class="success-message" style="display: none;">
+        Repository saved successfully!
+      </div>
+      <div id="repo-error" class="error-message" style="display: none;"></div>
+    </section>
+
+    <!-- Labels Section -->
+    <section id="labels-section" class="section" style="display: none;">
+      <h2>Default Labels</h2>
+      
+      <div class="form-group">
+        <label for="labels-input">Labels (comma-separated):</label>
+        <input 
+          type="text" 
+          id="labels-input" 
+          placeholder="bug, enhancement, help wanted"
+        >
+        <small class="help-text">These labels will be applied to new issues by default.</small>
+      </div>
+
+      <button id="save-labels-btn" class="btn btn-primary">Save Labels</button>
+      
+      <div id="labels-success" class="success-message" style="display: none;">
+        Labels saved successfully!
+      </div>
+    </section>
+
+    <!-- Test Issue Section -->
+    <section id="test-section" class="section" style="display: none;">
+      <h2>Test Integration</h2>
+      
+      <div class="form-group">
+        <label for="test-title">Issue Title:</label>
+        <input 
+          type="text" 
+          id="test-title" 
+          placeholder="Test issue from GhostHub"
+          value="Test issue from GhostHub"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="test-description">Description:</label>
+        <textarea 
+          id="test-description" 
+          rows="4" 
+          placeholder="Testing GitHub integration..."
+        >This is a test issue created by GhostHub Chrome Extension to verify the GitHub API integration is working correctly.</textarea>
+      </div>
+
+      <button id="create-test-issue-btn" class="btn btn-success">Create Test Issue</button>
+      
+      <div id="test-success" class="success-message" style="display: none;"></div>
+      <div id="test-error" class="error-message" style="display: none;"></div>
+    </section>
+
+    <footer>
+      <p class="footer-text">
+        <a href="https://github.com/ch-uppp/ghosthub" target="_blank">GitHub</a> | 
+        <a href="https://github.com/ch-uppp/ghosthub/issues" target="_blank">Report Issue</a>
+      </p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
