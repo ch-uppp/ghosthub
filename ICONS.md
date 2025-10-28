@@ -36,6 +36,7 @@ You can customize the icons by editing `generate-icons.js`:
 - `BACKGROUND_COLOR`: Background color (hex format)
 - `TEXT_COLOR`: Text color (hex format)
 - `LETTER`: The letter to display on the icon
+- `FONT_SIZE_RATIO`: Font size as a ratio of icon size (default: 0.6)
 
 ## Dependencies
 

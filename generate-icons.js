@@ -7,6 +7,7 @@ const ICON_SIZES = [16, 32, 48, 128];
 const BACKGROUND_COLOR = '#4A90E2'; // Blue background
 const TEXT_COLOR = '#FFFFFF'; // White text
 const LETTER = 'G';
+const FONT_SIZE_RATIO = 0.6; // Font size as a ratio of icon size
 
 // Create icons directory if it doesn't exist
 const iconsDir = path.join(__dirname, 'icons');
@@ -31,7 +32,7 @@ ICON_SIZES.forEach(size => {
   ctx.textBaseline = 'middle';
   
   // Set font size proportional to icon size
-  const fontSize = Math.floor(size * 0.6);
+  const fontSize = Math.floor(size * FONT_SIZE_RATIO);
   ctx.font = `bold ${fontSize}px Arial`;
 
   // Draw letter 'G' in the center
