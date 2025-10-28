@@ -185,12 +185,21 @@ ghosthub/
 ├── popup.html             # Settings UI
 ├── popup.js               # UI logic
 ├── popup.css              # UI styles
-├── icons/                 # Extension icons
-│   ├── icon16.png
-│   ├── icon32.png
-│   ├── icon48.png
-│   └── icon128.png
-└── GITHUB_API.md         # This file
+├── test-github-api.js     # Basic tests
+├── GITHUB_API.md         # This file
+├── README.md              # Project README
+├── content-scripts/       # Content scripts for chat platforms
+│   ├── slack.js
+│   ├── slack.css
+│   ├── discord.js
+│   ├── discord.css
+│   ├── whatsapp.js
+│   └── whatsapp.css
+└── icons/                 # Extension icons
+    ├── icon16.png
+    ├── icon32.png
+    ├── icon48.png
+    └── icon128.png
 ```
 
 ## Development

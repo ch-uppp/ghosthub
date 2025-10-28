@@ -20,10 +20,13 @@ function detectBugReport(messageText) {
  */
 async function createIssueFromMessage(messageData) {
   try {
+    // Extract a summary from the first line or first 50 characters
+    const summary = messageData.text.split('\n')[0].substring(0, 50) + '...';
+    
     const response = await chrome.runtime.sendMessage({
       action: 'createIssue',
       issueData: {
-        title: `Bug reported in Slack: ${messageData.summary}`,
+        title: `Bug reported in Slack: ${summary}`,
         body: `**Original message from Slack:**\n\n${messageData.text}\n\n**Reporter:** ${messageData.author}\n**Channel:** ${messageData.channel}\n**Time:** ${messageData.timestamp}`,
         labels: ['bug', 'from-slack']
       }

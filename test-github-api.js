@@ -97,7 +97,7 @@ function testIssueValidation() {
       throw new Error('Should fail with missing owner');
     })
     .catch(error => {
-      if (!error.message.includes('owner and name are required')) {
+      if (!error.message.includes('Repository owner and name are required')) {
         throw error;
       }
     });
@@ -108,7 +108,7 @@ function testIssueValidation() {
       throw new Error('Should fail with missing repo');
     })
     .catch(error => {
-      if (!error.message.includes('owner and name are required')) {
+      if (!error.message.includes('Repository owner and name are required')) {
         throw error;
       }
     });
@@ -119,7 +119,7 @@ function testIssueValidation() {
       throw new Error('Should fail with missing title');
     })
     .catch(error => {
-      if (!error.message.includes('title is required')) {
+      if (!error.message.includes('Issue title is required')) {
         throw error;
       }
     });
