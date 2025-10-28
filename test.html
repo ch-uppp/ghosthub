@@ -70,8 +70,8 @@
         threadId: 'test_thread_1',
         platform: 'test',
         messages: [
-          { author: 'alice', text: 'The app crashes when I submit the form', timestamp: Date.now() },
-          { author: 'bob', text: 'I can reproduce this. It happens on the payment page', timestamp: Date.now() },
+          { author: 'alice', text: 'The app crashes when I submit the form', timestamp: Date.now() - 120000 },
+          { author: 'bob', text: 'I can reproduce this. It happens on the payment page', timestamp: Date.now() - 60000 },
           { author: 'charlie', text: 'Same issue here. Console shows a null pointer exception', timestamp: Date.now() }
         ]
       };
