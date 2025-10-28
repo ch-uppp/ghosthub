@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostHub - Issue Drafts</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>👻 GhostHub</h1>
+      <p class="tagline">Turn chat chaos into GitHub issues</p>
+    </header>
+
+    <div class="status-section">
+      <h2>API Status</h2>
+      <div id="api-status">
+        <div class="status-item">
+          <span class="status-label">Prompt API:</span>
+          <span id="prompt-status" class="status-value">Checking...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Summarizer API:</span>
+          <span id="summarizer-status" class="status-value">Checking...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-button active" data-tab="issues">Issue Drafts</button>
+      <button class="tab-button" data-tab="classifications">Classifications</button>
+      <button class="tab-button" data-tab="summaries">Summaries</button>
+    </div>
+
+    <div class="tab-content active" id="issues-tab">
+      <h2>Issue Drafts</h2>
+      <div class="filter-section">
+        <select id="issue-filter">
+          <option value="all">All</option>
+          <option value="draft">Drafts</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div id="issues-list" class="list-container">
+        <p class="loading">Loading issues...</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="classifications-tab">
+      <h2>Message Classifications</h2>
+      <div class="filter-section">
+        <select id="classification-filter">
+          <option value="all">All</option>
+          <option value="bug">Bugs</option>
+          <option value="feature">Features</option>
+          <option value="pr_mention">PR Mentions</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div id="classifications-list" class="list-container">
+        <p class="loading">Loading classifications...</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="summaries-tab">
+      <h2>Thread Summaries</h2>
+      <div id="summaries-list" class="list-container">
+        <p class="loading">Loading summaries...</p>
+      </div>
+    </div>
+
+    <footer>
+      <p class="info">All processing happens on-device. Your data never leaves your browser.</p>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
