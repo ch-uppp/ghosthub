@@ -1,0 +1,18 @@
+/**
+ * GhostHub Discord Styles
+ * 
+ * Minimal styles for GhostHub integration with Discord
+ */
+
+/* Marker for detected actionable messages (optional, for debugging) */
+.ghosthub-actionable {
+  /* This class can be added to messages detected as actionable */
+  /* border-left: 2px solid #5865f2; */
+}
+
+/* Ensure GhostHub elements don't interfere with Discord's layout */
+.ghosthub-overlay {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+}

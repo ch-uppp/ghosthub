@@ -1,0 +1,18 @@
+/**
+ * GhostHub Slack Styles
+ * 
+ * Minimal styles for GhostHub integration with Slack
+ */
+
+/* Marker for detected actionable messages (optional, for debugging) */
+.ghosthub-actionable {
+  /* This class can be added to messages detected as actionable */
+  /* border-left: 2px solid #4a90e2; */
+}
+
+/* Ensure GhostHub elements don't interfere with Slack's layout */
+.ghosthub-overlay {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+}
