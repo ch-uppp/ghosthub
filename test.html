@@ -215,7 +215,15 @@
     function displayPreview(file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        previewDiv.innerHTML = `<img src="${e.target.result}" class="preview" alt="Preview">`;
+        // Clear previous preview
+        previewDiv.textContent = '';
+        
+        // Create image element safely
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'preview';
+        img.alt = 'Preview';
+        previewDiv.appendChild(img);
       };
       reader.readAsDataURL(file);
     }
@@ -259,7 +267,16 @@
       ctx.fillText('    at handleLogin (app.js:89:3)', 20, 105);
       
       canvas.toBlob(async (blob) => {
-        previewDiv.innerHTML = `<img src="${canvas.toDataURL()}" class="preview" alt="Test Error Screenshot">`;
+        // Clear previous preview
+        previewDiv.textContent = '';
+        
+        // Create image element safely
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL();
+        img.className = 'preview';
+        img.alt = 'Test Error Screenshot';
+        previewDiv.appendChild(img);
+        
         await analyzeImage(blob);
       });
     });
