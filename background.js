@@ -31,7 +31,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Send acknowledgment response
   sendResponse({ received: true, timestamp: Date.now() });
 
-  // Return true to indicate we will send a response asynchronously if needed
+  // Return true to keep the message channel open for the sendResponse callback
   return true;
 });
 
