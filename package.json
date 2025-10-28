@@ -1,0 +1,13 @@
+{
+  "name": "ghosthub",
+  "version": "1.0.0",
+  "description": "Turn chat chaos into GitHub issues — automatically, privately, instantly.",
+  "scripts": {
+    "generate-icons": "node generate-icons.js"
+  },
+  "author": "ch-uppp",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.11.2"
+  }
+}
