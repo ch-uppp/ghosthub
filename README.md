@@ -33,5 +33,55 @@ GhostHub is a Chrome extension that listens to Slack, Discord, and WhatsApp Web 
 
 1. Clone this repository:  
    ```bash
-   git clone https://github.com/yourusername/ghosthub.git
+   git clone https://github.com/ch-uppp/ghosthub.git
+   cd ghosthub
+   ```
 
+2. Load the extension in Chrome:
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode" in the top right corner
+   - Click "Load unpacked"
+   - Select the `ghosthub` directory
+
+3. Configure GitHub integration:
+   - Click the GhostHub extension icon
+   - Generate a GitHub Personal Access Token at [GitHub Settings > Tokens](https://github.com/settings/tokens)
+   - Grant the token `repo` scope
+   - Enter the token in GhostHub and verify
+   - Select your target repository
+
+For detailed setup instructions, see [GITHUB_API.md](./GITHUB_API.md)
+
+---
+
+## 🔧 GitHub Integration
+
+GhostHub includes a complete GitHub REST API integration that allows you to:
+
+- ✅ **Authenticate** via Personal Access Token or OAuth
+- ✅ **Create issues** with titles, descriptions, and labels
+- ✅ **Select repositories** from your accessible repos
+- ✅ **Configure default labels** for automatic tagging
+- ✅ **Test integration** directly from the popup UI
+
+### Quick Start
+
+```javascript
+// Create an issue programmatically
+chrome.runtime.sendMessage({
+  action: 'createIssue',
+  issueData: {
+    title: 'Bug: Example issue',
+    body: 'Detailed description...',
+    labels: ['bug', 'from-chat']
+  }
+}, (response) => {
+  if (response.success) {
+    console.log('Issue created:', response.issue.html_url);
+  }
+});
+```
+
+See [GITHUB_API.md](./GITHUB_API.md) for complete documentation.
+
+---

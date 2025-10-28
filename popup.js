@@ -1,247 +1,420 @@
-// IndexedDB configuration
-const DB_NAME = 'GhostHubDB';
-const DB_VERSION = 1;
-const STORE_NAME = 'messages';
-
 /**
- * Open IndexedDB connection
- * @returns {Promise<IDBDatabase>}
+ * Popup UI Script
+ * Handles user interactions and communication with background service worker
  */
-function openDatabase() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
-    
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      
-      // Create object store if it doesn't exist
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const objectStore = db.createObjectStore(STORE_NAME, { 
-          keyPath: 'id', 
-          autoIncrement: true 
-        });
-        
-        // Create indexes for efficient querying
-        objectStore.createIndex('timestamp', 'timestamp', { unique: false });
-        objectStore.createIndex('platform', 'platform', { unique: false });
-        objectStore.createIndex('type', 'type', { unique: false });
-      }
-    };
-  });
-}
 
-/**
- * Fetch all messages from IndexedDB
- * @returns {Promise<Array>}
- */
-async function fetchMessages() {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(STORE_NAME, 'readonly');
-    const objectStore = transaction.objectStore(STORE_NAME);
-    
-    return new Promise((resolve, reject) => {
-      const request = objectStore.getAll();
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Error fetching messages:', error);
-    return [];
-  }
-}
+// DOM Elements
+const elements = {
+  // Authentication
+  notAuthenticated: document.getElementById('not-authenticated'),
+  authenticated: document.getElementById('authenticated'),
+  tokenInput: document.getElementById('token-input'),
+  verifyBtn: document.getElementById('verify-btn'),
+  disconnectBtn: document.getElementById('disconnect-btn'),
+  authError: document.getElementById('auth-error'),
+  userAvatar: document.getElementById('user-avatar'),
+  userName: document.getElementById('user-name'),
+  userLogin: document.getElementById('user-login'),
+  
+  // Repository
+  repoSection: document.getElementById('repo-section'),
+  repoSelect: document.getElementById('repo-select'),
+  saveRepoBtn: document.getElementById('save-repo-btn'),
+  repoSuccess: document.getElementById('repo-success'),
+  repoError: document.getElementById('repo-error'),
+  
+  // Labels
+  labelsSection: document.getElementById('labels-section'),
+  labelsInput: document.getElementById('labels-input'),
+  saveLabelsBtn: document.getElementById('save-labels-btn'),
+  labelsSuccess: document.getElementById('labels-success'),
+  
+  // Test
+  testSection: document.getElementById('test-section'),
+  testTitle: document.getElementById('test-title'),
+  testDescription: document.getElementById('test-description'),
+  createTestIssueBtn: document.getElementById('create-test-issue-btn'),
+  testSuccess: document.getElementById('test-success'),
+  testError: document.getElementById('test-error')
+};
 
-/**
- * Clear all messages from IndexedDB
- * @returns {Promise<void>}
- */
-async function clearAllMessages() {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const objectStore = transaction.objectStore(STORE_NAME);
-    
-    return new Promise((resolve, reject) => {
-      const request = objectStore.clear();
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Error clearing messages:', error);
-    throw error;
-  }
-}
-
-/**
- * Format timestamp for display
- * @param {number} timestamp
- * @returns {string}
- */
-function formatTimestamp(timestamp) {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffMs = now - date;
-  const diffMins = Math.floor(diffMs / 60000);
-  
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  
-  const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
-  
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `${diffDays}d ago`;
-  
-  return date.toLocaleDateString();
-}
-
-/**
- * Get platform icon/emoji
- * @param {string} platform
- * @returns {string}
- */
-function getPlatformIcon(platform) {
-  const icons = {
-    'slack': '💬',
-    'discord': '🎮',
-    'whatsapp': '📱',
-    'default': '💭'
-  };
-  return icons[platform?.toLowerCase()] || icons.default;
-}
-
-/**
- * Create message element
- * @param {Object} message
- * @returns {HTMLElement}
- */
-function createMessageElement(message) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'message-item';
-  messageDiv.dataset.id = message.id;
-  
-  const platform = message.platform || 'unknown';
-  const timestamp = message.timestamp || Date.now();
-  const content = message.content || message.text || 'No content';
-  const author = message.author || 'Unknown';
-  const type = message.type || 'message';
-  
-  messageDiv.innerHTML = `
-    <div class="message-header">
-      <span class="platform-icon" title="${platform}">${getPlatformIcon(platform)}</span>
-      <span class="message-author">${author}</span>
-      <span class="message-time">${formatTimestamp(timestamp)}</span>
-    </div>
-    <div class="message-content">${content}</div>
-    ${type !== 'message' ? `<div class="message-type">${type}</div>` : ''}
-  `;
-  
-  return messageDiv;
-}
-
-/**
- * Render messages in the list
- * @param {Array} messages
- */
-function renderMessages(messages) {
-  const messageList = document.getElementById('message-list');
-  const emptyState = document.getElementById('empty-state');
-  
-  // Clear loading state
-  messageList.innerHTML = '';
-  
-  if (!messages || messages.length === 0) {
-    messageList.style.display = 'none';
-    emptyState.style.display = 'block';
-    return;
-  }
-  
-  messageList.style.display = 'block';
-  emptyState.style.display = 'none';
-  
-  // Sort messages by timestamp (newest first)
-  const sortedMessages = [...messages].sort((a, b) => 
-    (b.timestamp || 0) - (a.timestamp || 0)
-  );
-  
-  // Render each message
-  sortedMessages.forEach(message => {
-    const messageElement = createMessageElement(message);
-    messageList.appendChild(messageElement);
-  });
-}
-
-/**
- * Load and display messages
- */
-async function loadMessages() {
-  try {
-    const messages = await fetchMessages();
-    renderMessages(messages);
-  } catch (error) {
-    console.error('Error loading messages:', error);
-    const messageList = document.getElementById('message-list');
-    messageList.innerHTML = '<div class="error">Failed to load messages. Please try again.</div>';
-  }
-}
-
-/**
- * Handle refresh button click
- */
-async function handleRefresh() {
-  const refreshBtn = document.getElementById('refresh-btn');
-  refreshBtn.disabled = true;
-  refreshBtn.textContent = 'Refreshing...';
-  
-  await loadMessages();
-  
-  refreshBtn.disabled = false;
-  refreshBtn.textContent = 'Refresh';
-}
-
-/**
- * Handle clear all button click
- */
-async function handleClearAll() {
-  if (!confirm('Are you sure you want to clear all captured messages?')) {
-    return;
-  }
-  
-  const clearBtn = document.getElementById('clear-btn');
-  clearBtn.disabled = true;
-  clearBtn.textContent = 'Clearing...';
-  
-  try {
-    await clearAllMessages();
-    await loadMessages();
-  } catch (error) {
-    console.error('Error clearing messages:', error);
-    alert('Failed to clear messages. Please try again.');
-  } finally {
-    clearBtn.disabled = false;
-    clearBtn.textContent = 'Clear All';
-  }
-}
+// State
+let currentUser = null;
+let repositories = [];
 
 /**
  * Initialize popup
  */
-document.addEventListener('DOMContentLoaded', () => {
-  // Load messages on popup open
-  loadMessages();
+async function init() {
+  // Load saved settings
+  await loadSettings();
   
-  // Set up event listeners
-  const refreshBtn = document.getElementById('refresh-btn');
-  const clearBtn = document.getElementById('clear-btn');
+  // Setup event listeners
+  setupEventListeners();
+}
+
+/**
+ * Load saved settings
+ */
+async function loadSettings() {
+  try {
+    const response = await sendMessage({ action: 'getSettings' });
+    
+    if (response.success && response.settings.githubToken) {
+      // User is authenticated, verify token
+      await verifyExistingToken(response.settings.githubToken);
+    }
+  } catch (error) {
+    console.error('Failed to load settings:', error);
+  }
+}
+
+/**
+ * Verify existing token
+ */
+async function verifyExistingToken(token) {
+  try {
+    const response = await sendMessage({ 
+      action: 'verifyAuth', 
+      token: token 
+    });
+    
+    if (response.success) {
+      showAuthenticated(response.user);
+      await loadRepositories();
+    } else {
+      showNotAuthenticated();
+    }
+  } catch (error) {
+    console.error('Failed to verify token:', error);
+    showNotAuthenticated();
+  }
+}
+
+/**
+ * Setup event listeners
+ */
+function setupEventListeners() {
+  elements.verifyBtn.addEventListener('click', handleVerifyToken);
+  elements.disconnectBtn.addEventListener('click', handleDisconnect);
+  elements.saveRepoBtn.addEventListener('click', handleSaveRepository);
+  elements.saveLabelsBtn.addEventListener('click', handleSaveLabels);
+  elements.createTestIssueBtn.addEventListener('click', handleCreateTestIssue);
   
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', handleRefresh);
+  // Allow Enter key to verify token
+  elements.tokenInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      handleVerifyToken();
+    }
+  });
+}
+
+/**
+ * Handle verify token button click
+ */
+async function handleVerifyToken() {
+  const token = elements.tokenInput.value.trim();
+  
+  if (!token) {
+    showError(elements.authError, 'Please enter a GitHub token');
+    return;
   }
   
-  if (clearBtn) {
-    clearBtn.addEventListener('click', handleClearAll);
+  setLoading(elements.verifyBtn, true);
+  hideMessage(elements.authError);
+  
+  try {
+    const response = await sendMessage({ 
+      action: 'verifyAuth', 
+      token: token 
+    });
+    
+    if (response.success) {
+      // Save token
+      await sendMessage({ action: 'saveToken', token: token });
+      
+      // Show authenticated state
+      showAuthenticated(response.user);
+      
+      // Load repositories
+      await loadRepositories();
+      
+      // Clear token input
+      elements.tokenInput.value = '';
+    } else {
+      showError(elements.authError, response.error || 'Authentication failed');
+    }
+  } catch (error) {
+    showError(elements.authError, error.message);
+  } finally {
+    setLoading(elements.verifyBtn, false);
   }
-});
+}
+
+/**
+ * Handle disconnect button click
+ */
+async function handleDisconnect() {
+  setLoading(elements.disconnectBtn, true);
+  
+  try {
+    await sendMessage({ action: 'removeToken' });
+    showNotAuthenticated();
+  } catch (error) {
+    showError(elements.authError, error.message);
+  } finally {
+    setLoading(elements.disconnectBtn, false);
+  }
+}
+
+/**
+ * Load repositories
+ */
+async function loadRepositories() {
+  elements.repoSelect.innerHTML = '<option value="">Loading repositories...</option>';
+  
+  try {
+    const response = await sendMessage({ 
+      action: 'listRepositories',
+      options: { per_page: 100 }
+    });
+    
+    if (response.success) {
+      repositories = response.repositories;
+      populateRepositorySelect(repositories);
+      
+      // Load saved repository selection
+      const settings = await sendMessage({ action: 'getSettings' });
+      if (settings.success && settings.settings.selectedRepository) {
+        elements.repoSelect.value = settings.settings.selectedRepository.fullName;
+      }
+      
+      // Load saved labels
+      if (settings.success && settings.settings.defaultLabels) {
+        elements.labelsInput.value = settings.settings.defaultLabels.join(', ');
+      }
+    } else {
+      showError(elements.repoError, response.error || 'Failed to load repositories');
+    }
+  } catch (error) {
+    showError(elements.repoError, error.message);
+  }
+}
+
+/**
+ * Populate repository select dropdown
+ */
+function populateRepositorySelect(repos) {
+  elements.repoSelect.innerHTML = '<option value="">Select a repository...</option>';
+  
+  repos.forEach(repo => {
+    const option = document.createElement('option');
+    option.value = repo.fullName;
+    option.textContent = `${repo.fullName}${repo.private ? ' 🔒' : ''}`;
+    option.dataset.owner = repo.owner;
+    option.dataset.name = repo.name;
+    elements.repoSelect.appendChild(option);
+  });
+}
+
+/**
+ * Handle save repository button click
+ */
+async function handleSaveRepository() {
+  const selectedValue = elements.repoSelect.value;
+  
+  if (!selectedValue) {
+    showError(elements.repoError, 'Please select a repository');
+    return;
+  }
+  
+  const selectedOption = elements.repoSelect.options[elements.repoSelect.selectedIndex];
+  const repository = {
+    fullName: selectedValue,
+    owner: selectedOption.dataset.owner,
+    name: selectedOption.dataset.name
+  };
+  
+  setLoading(elements.saveRepoBtn, true);
+  hideMessage(elements.repoError);
+  hideMessage(elements.repoSuccess);
+  
+  try {
+    const response = await sendMessage({ 
+      action: 'saveRepository', 
+      repository: repository 
+    });
+    
+    if (response.success) {
+      showSuccess(elements.repoSuccess, 'Repository saved successfully!');
+    } else {
+      showError(elements.repoError, response.error || 'Failed to save repository');
+    }
+  } catch (error) {
+    showError(elements.repoError, error.message);
+  } finally {
+    setLoading(elements.saveRepoBtn, false);
+  }
+}
+
+/**
+ * Handle save labels button click
+ */
+async function handleSaveLabels() {
+  const labelsText = elements.labelsInput.value.trim();
+  const labels = labelsText ? labelsText.split(',').map(l => l.trim()).filter(l => l) : [];
+  
+  setLoading(elements.saveLabelsBtn, true);
+  hideMessage(elements.labelsSuccess);
+  
+  try {
+    const response = await sendMessage({ 
+      action: 'saveDefaultLabels', 
+      labels: labels 
+    });
+    
+    if (response.success) {
+      showSuccess(elements.labelsSuccess, 'Labels saved successfully!');
+    } else {
+      showError(elements.labelsSuccess, response.error || 'Failed to save labels');
+    }
+  } catch (error) {
+    showError(elements.labelsSuccess, error.message);
+  } finally {
+    setLoading(elements.saveLabelsBtn, false);
+  }
+}
+
+/**
+ * Handle create test issue button click
+ */
+async function handleCreateTestIssue() {
+  const title = elements.testTitle.value.trim();
+  const body = elements.testDescription.value.trim();
+  
+  if (!title) {
+    showError(elements.testError, 'Please enter an issue title');
+    return;
+  }
+  
+  setLoading(elements.createTestIssueBtn, true);
+  hideMessage(elements.testError);
+  hideMessage(elements.testSuccess);
+  
+  try {
+    const response = await sendMessage({ 
+      action: 'createIssue',
+      issueData: {
+        title: title,
+        body: body
+      }
+    });
+    
+    if (response.success) {
+      const issue = response.issue;
+      const message = `Issue created successfully! <a href="${issue.html_url}" target="_blank">#${issue.number}</a>`;
+      elements.testSuccess.innerHTML = message;
+      elements.testSuccess.style.display = 'block';
+    } else {
+      showError(elements.testError, response.error || 'Failed to create issue');
+    }
+  } catch (error) {
+    showError(elements.testError, error.message);
+  } finally {
+    setLoading(elements.createTestIssueBtn, false);
+  }
+}
+
+/**
+ * Show authenticated state
+ */
+function showAuthenticated(user) {
+  currentUser = user;
+  
+  elements.notAuthenticated.style.display = 'none';
+  elements.authenticated.style.display = 'block';
+  elements.repoSection.style.display = 'block';
+  elements.labelsSection.style.display = 'block';
+  elements.testSection.style.display = 'block';
+  
+  elements.userAvatar.src = user.avatar_url;
+  elements.userName.textContent = user.name || user.login;
+  elements.userLogin.textContent = `@${user.login}`;
+}
+
+/**
+ * Show not authenticated state
+ */
+function showNotAuthenticated() {
+  currentUser = null;
+  
+  elements.notAuthenticated.style.display = 'block';
+  elements.authenticated.style.display = 'none';
+  elements.repoSection.style.display = 'none';
+  elements.labelsSection.style.display = 'none';
+  elements.testSection.style.display = 'none';
+}
+
+/**
+ * Send message to background script
+ */
+function sendMessage(message) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(message, (response) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+      } else {
+        resolve(response);
+      }
+    });
+  });
+}
+
+/**
+ * Show error message
+ */
+function showError(element, message) {
+  element.textContent = message;
+  element.style.display = 'block';
+}
+
+/**
+ * Show success message
+ */
+function showSuccess(element, message) {
+  element.textContent = message;
+  element.style.display = 'block';
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    element.style.display = 'none';
+  }, 3000);
+}
+
+/**
+ * Hide message
+ */
+function hideMessage(element) {
+  element.style.display = 'none';
+}
+
+/**
+ * Set loading state for button
+ */
+function setLoading(button, loading) {
+  if (loading) {
+    button.disabled = true;
+    button.dataset.originalText = button.textContent;
+    button.textContent = 'Loading...';
+  } else {
+    button.disabled = false;
+    button.textContent = button.dataset.originalText || button.textContent;
+  }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
