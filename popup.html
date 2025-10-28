@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostHub - Captured Messages</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>GhostHub</h1>
+      <p class="subtitle">Captured Chat Messages</p>
+    </header>
+    
+    <main class="popup-content">
+      <div id="message-list" class="message-list">
+        <div class="loading">Loading messages...</div>
+      </div>
+      
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <p>No messages captured yet.</p>
+        <p class="hint">Visit Slack, Discord, or WhatsApp Web to start monitoring messages.</p>
+      </div>
+    </main>
+    
+    <footer class="popup-footer">
+      <button id="refresh-btn" class="btn btn-secondary">Refresh</button>
+      <button id="clear-btn" class="btn btn-danger">Clear All</button>
+    </footer>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
