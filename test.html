@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostHub - Multimodal AI Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    h1 {
+      color: #667eea;
+      text-align: center;
+    }
+    
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    button {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 10px 5px;
+    }
+    
+    button:hover {
+      background: #5568d3;
+    }
+    
+    #imageInput {
+      margin: 10px 0;
+    }
+    
+    #result {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 12px;
+      border: 1px solid #ddd;
+    }
+    
+    .preview {
+      max-width: 100%;
+      margin: 10px 0;
+      border: 2px solid #667eea;
+      border-radius: 6px;
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h1>👻 GhostHub Multimodal AI Test</h1>
+  
+  <div class="test-section">
+    <h2>Test Chrome Multimodal AI</h2>
+    <p>This page tests the multimodal AI functionality used by GhostHub to analyze screenshots.</p>
+    
+    <div id="status" class="status info">
+      Checking if Chrome AI APIs are available...
+    </div>
+    
+    <div>
+      <h3>Upload an Image to Analyze:</h3>
+      <input type="file" id="imageInput" accept="image/*">
+      <button id="analyzeBtn">Analyze Image</button>
+      <button id="testErrorBtn">Test with Error Screenshot</button>
+    </div>
+    
+    <div id="preview"></div>
+    
+    <div id="result"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Sample Test Cases</h2>
+    <p>Use these test scenarios:</p>
+    <ul>
+      <li><strong>Error Screenshot:</strong> Upload a screenshot of a browser console with errors</li>
+      <li><strong>UI Bug:</strong> Upload a screenshot showing a visual bug or broken layout</li>
+      <li><strong>Code Snippet:</strong> Upload a screenshot of code</li>
+      <li><strong>Text Image:</strong> Upload any image with visible text</li>
+    </ul>
+  </div>
+  
+  <script src="utils/multimodal-ai.js"></script>
+  <script>
+    const statusDiv = document.getElementById('status');
+    const resultDiv = document.getElementById('result');
+    const previewDiv = document.getElementById('preview');
+    const imageInput = document.getElementById('imageInput');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const testErrorBtn = document.getElementById('testErrorBtn');
+    
+    let multimodalAI;
+    
+    async function checkAvailability() {
+      try {
+        if (!window.ai || !window.ai.languageModel) {
+          statusDiv.className = 'status error';
+          statusDiv.textContent = '❌ Chrome AI APIs not available. Please enable the required flags.';
+          return false;
+        }
+        
+        const capabilities = await window.ai.languageModel.capabilities();
+        
+        if (capabilities.available === 'no') {
+          statusDiv.className = 'status error';
+          statusDiv.textContent = '❌ Multimodal AI not available on this system.';
+          return false;
+        }
+        
+        statusDiv.className = 'status success';
+        statusDiv.textContent = '✅ Chrome AI APIs are available! Ready to test.';
+        
+        // Initialize multimodal AI
+        multimodalAI = new MultimodalAI();
+        await multimodalAI.initialize();
+        
+        return true;
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Error: ${error.message}`;
+        return false;
+      }
+    }
+    
+    async function analyzeImage(imageSource) {
+      try {
+        statusDiv.className = 'status info';
+        statusDiv.textContent = '🔄 Analyzing image...';
+        resultDiv.textContent = '';
+        
+        const result = await multimodalAI.processImage(imageSource);
+        
+        statusDiv.className = 'status success';
+        statusDiv.textContent = '✅ Analysis complete!';
+        
+        // Display results
+        resultDiv.textContent = JSON.stringify(result, null, 2);
+        
+        // Show formatted output
+        let formatted = '=== ANALYSIS RESULTS ===\n\n';
+        
+        if (result.error) {
+          formatted += `ERROR: ${result.error}\n\n`;
+        }
+        
+        if (result.errors && result.errors.length > 0) {
+          formatted += 'DETECTED ERRORS:\n';
+          result.errors.forEach(err => {
+            formatted += `  - ${err}\n`;
+          });
+          formatted += '\n';
+        }
+        
+        if (result.text) {
+          formatted += `VISIBLE TEXT:\n${result.text}\n\n`;
+        }
+        
+        if (result.context) {
+          formatted += `CONTEXT:\n${result.context}\n\n`;
+        }
+        
+        formatted += '\n=== RAW RESPONSE ===\n';
+        formatted += result.rawResponse || 'No raw response';
+        
+        resultDiv.textContent = formatted;
+        
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Analysis failed: ${error.message}`;
+        resultDiv.textContent = error.stack;
+      }
+    }
+    
+    function displayPreview(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewDiv.innerHTML = `<img src="${e.target.result}" class="preview" alt="Preview">`;
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        displayPreview(file);
+      }
+    });
+    
+    analyzeBtn.addEventListener('click', async () => {
+      const file = imageInput.files[0];
+      if (!file) {
+        alert('Please select an image first');
+        return;
+      }
+      
+      await analyzeImage(file);
+    });
+    
+    testErrorBtn.addEventListener('click', () => {
+      // Create a test error screenshot using canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+      
+      // Background
+      ctx.fillStyle = '#1e1e1e';
+      ctx.fillRect(0, 0, 800, 400);
+      
+      // Error text
+      ctx.fillStyle = '#ff6b6b';
+      ctx.font = '16px Consolas, monospace';
+      ctx.fillText('Uncaught TypeError: Cannot read property \'token\' of undefined', 20, 40);
+      ctx.fillStyle = '#888';
+      ctx.font = '14px Consolas, monospace';
+      ctx.fillText('    at login.js:45:12', 20, 65);
+      ctx.fillText('    at AuthService.authenticate (auth.js:123:5)', 20, 85);
+      ctx.fillText('    at handleLogin (app.js:89:3)', 20, 105);
+      
+      canvas.toBlob(async (blob) => {
+        previewDiv.innerHTML = `<img src="${canvas.toDataURL()}" class="preview" alt="Test Error Screenshot">`;
+        await analyzeImage(blob);
+      });
+    });
+    
+    // Check availability on load
+    checkAvailability();
+  </script>
+</body>
+</html>
