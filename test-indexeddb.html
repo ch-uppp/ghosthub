@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndexedDB Utility Test - GhostHub</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .output {
+      background-color: #f9f9f9;
+      padding: 15px;
+      margin-top: 15px;
+      border-left: 4px solid #4CAF50;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .error {
+      border-left-color: #f44336;
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    .success {
+      border-left-color: #4CAF50;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    .info {
+      border-left-color: #2196F3;
+      background-color: #e3f2fd;
+      color: #1565c0;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 IndexedDB Utility Functions Test</h1>
+  
+  <div class="test-section">
+    <h2>Test Operations</h2>
+    <div class="button-group">
+      <button onclick="runAllTests()">Run All Tests</button>
+      <button onclick="testStore()">Test Store</button>
+      <button onclick="testRetrieve()">Test Retrieve</button>
+      <button onclick="testRetrieveAll()">Test Retrieve All</button>
+      <button onclick="testUpdate()">Test Update</button>
+      <button onclick="testDelete()">Test Delete</button>
+      <button onclick="testCount()">Test Count</button>
+      <button onclick="clearOutput()">Clear Output</button>
+      <button onclick="clearDatabase()" style="background-color: #f44336;">Clear Database</button>
+    </div>
+    <div id="output" class="output"></div>
+  </div>
+
+  <script src="utils/indexeddb.js"></script>
+  <script>
+    let testItemId = null;
+
+    function log(message, type = 'info') {
+      const output = document.getElementById('output');
+      const div = document.createElement('div');
+      div.className = type;
+      div.innerHTML = `<pre>${message}</pre>`;
+      output.appendChild(div);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      document.getElementById('output').innerHTML = '';
+    }
+
+    async function testStore() {
+      log('=== Testing Store Function ===', 'info');
+      try {
+        // Test storing a message
+        const testData = {
+          platform: 'slack',
+          type: 'bug',
+          content: 'Login button is not working on mobile Safari. Getting a 404 error.',
+          status: 'pending',
+          metadata: {
+            author: 'john.doe',
+            channel: '#bugs',
+            url: 'https://slack.com/archives/C123/p456'
+          }
+        };
+
+        log(`Storing test data: ${JSON.stringify(testData, null, 2)}`);
+        testItemId = await store(testData);
+        log(`✅ Successfully stored item with ID: ${testItemId}`, 'success');
+
+        // Store additional test items
+        const testData2 = {
+          platform: 'discord',
+          type: 'feature',
+          content: 'Add dark mode support to the dashboard',
+          status: 'pending'
+        };
+        const id2 = await store(testData2);
+        log(`✅ Stored second item with ID: ${id2}`, 'success');
+
+        const testData3 = {
+          platform: 'whatsapp',
+          type: 'pr_mention',
+          content: 'Please review PR #123 for the authentication fix',
+          status: 'approved'
+        };
+        const id3 = await store(testData3);
+        log(`✅ Stored third item with ID: ${id3}`, 'success');
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function testRetrieve() {
+      log('=== Testing Retrieve Function ===', 'info');
+      try {
+        if (!testItemId) {
+          log('⚠️  No test item ID available. Running store test first...', 'info');
+          await testStore();
+        }
+
+        log(`Retrieving item with ID: ${testItemId}`);
+        const item = await retrieve(testItemId);
+        
+        if (item) {
+          log(`✅ Successfully retrieved item:\n${JSON.stringify(item, null, 2)}`, 'success');
+        } else {
+          log(`❌ Item with ID ${testItemId} not found`, 'error');
+        }
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function testRetrieveAll() {
+      log('=== Testing Retrieve All Function ===', 'info');
+      try {
+        // Retrieve all items
+        log('Retrieving all items...');
+        const allItems = await retrieveAll();
+        log(`✅ Found ${allItems.length} items total:\n${JSON.stringify(allItems, null, 2)}`, 'success');
+
+        // Test filtering by platform
+        log('\nFiltering by platform: "slack"');
+        const slackItems = await retrieveAll({ platform: 'slack' });
+        log(`✅ Found ${slackItems.length} Slack items:\n${JSON.stringify(slackItems, null, 2)}`, 'success');
+
+        // Test filtering by type
+        log('\nFiltering by type: "bug"');
+        const bugItems = await retrieveAll({ type: 'bug' });
+        log(`✅ Found ${bugItems.length} bug items:\n${JSON.stringify(bugItems, null, 2)}`, 'success');
+
+        // Test filtering by status
+        log('\nFiltering by status: "pending"');
+        const pendingItems = await retrieveAll({ status: 'pending' });
+        log(`✅ Found ${pendingItems.length} pending items`, 'success');
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function testUpdate() {
+      log('=== Testing Update Function ===', 'info');
+      try {
+        if (!testItemId) {
+          log('⚠️  No test item ID available. Running store test first...', 'info');
+          await testStore();
+        }
+
+        log(`Retrieving item ${testItemId} before update...`);
+        const beforeUpdate = await retrieve(testItemId);
+        log(`Before: ${JSON.stringify(beforeUpdate, null, 2)}`);
+
+        log(`\nUpdating item ${testItemId}...`);
+        const updates = {
+          status: 'approved',
+          content: 'UPDATED: Login button is not working on mobile Safari. Getting a 404 error.',
+          metadata: {
+            ...beforeUpdate.metadata,
+            updatedAt: Date.now(),
+            reviewer: 'admin'
+          }
+        };
+        await update(testItemId, updates);
+        log(`✅ Successfully updated item`, 'success');
+
+        log(`\nRetrieving item ${testItemId} after update...`);
+        const afterUpdate = await retrieve(testItemId);
+        log(`After: ${JSON.stringify(afterUpdate, null, 2)}`, 'success');
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function testDelete() {
+      log('=== Testing Delete Function ===', 'info');
+      try {
+        // Create a temporary item to delete
+        log('Creating a temporary item to delete...');
+        const tempData = {
+          platform: 'slack',
+          type: 'bug',
+          content: 'This item will be deleted',
+          status: 'pending'
+        };
+        const tempId = await store(tempData);
+        log(`✅ Created temporary item with ID: ${tempId}`);
+
+        log(`\nVerifying item exists...`);
+        const itemBefore = await retrieve(tempId);
+        log(`Item found: ${JSON.stringify(itemBefore, null, 2)}`);
+
+        log(`\nDeleting item ${tempId}...`);
+        await deleteItem(tempId);
+        log(`✅ Successfully deleted item`, 'success');
+
+        log(`\nVerifying item was deleted...`);
+        const itemAfter = await retrieve(tempId);
+        if (itemAfter === null) {
+          log(`✅ Confirmed: Item ${tempId} no longer exists`, 'success');
+        } else {
+          log(`❌ Error: Item ${tempId} still exists!`, 'error');
+        }
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function testCount() {
+      log('=== Testing Count Function ===', 'info');
+      try {
+        const totalCount = await count();
+        log(`✅ Total items in database: ${totalCount}`, 'success');
+
+        const slackCount = await count({ platform: 'slack' });
+        log(`✅ Slack items: ${slackCount}`, 'success');
+
+        const bugCount = await count({ type: 'bug' });
+        log(`✅ Bug items: ${bugCount}`, 'success');
+
+        const pendingCount = await count({ status: 'pending' });
+        log(`✅ Pending items: ${pendingCount}`, 'success');
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function clearDatabase() {
+      log('=== Clearing Database ===', 'info');
+      if (confirm('Are you sure you want to delete all data from the database?')) {
+        try {
+          await deleteAll();
+          log('✅ Database cleared successfully', 'success');
+          testItemId = null;
+        } catch (error) {
+          log(`❌ Error: ${error.message}`, 'error');
+        }
+      } else {
+        log('Database clear cancelled', 'info');
+      }
+    }
+
+    async function runAllTests() {
+      clearOutput();
+      log('🚀 Running all tests...', 'info');
+      log('');
+      
+      await testStore();
+      log('\n');
+      
+      await testRetrieve();
+      log('\n');
+      
+      await testRetrieveAll();
+      log('\n');
+      
+      await testUpdate();
+      log('\n');
+      
+      await testDelete();
+      log('\n');
+      
+      await testCount();
+      log('\n');
+      
+      log('✅ All tests completed!', 'success');
+    }
+
+    // Display initial message
+    log('IndexedDB Utility Test Page Loaded', 'success');
+    log('Click "Run All Tests" to test all functions, or click individual test buttons.', 'info');
+  </script>
+</body>
+</html>
