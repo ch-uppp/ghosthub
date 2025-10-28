@@ -31,7 +31,70 @@ GhostHub is a Chrome extension that listens to Slack, Discord, and WhatsApp Web 
 
 ## 🛠 Installation
 
+### Requirements
+- Google Chrome 127 or later
+- Chrome's built-in AI APIs (Prompt API and Summarizer API)
+
+### Setup
+
 1. Clone this repository:  
    ```bash
-   git clone https://github.com/yourusername/ghosthub.git
+   git clone https://github.com/ch-uppp/ghosthub.git
+   cd ghosthub
+   ```
+
+2. Load the extension in Chrome:
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode" (toggle in the top-right corner)
+   - Click "Load unpacked"
+   - Select the `ghosthub` directory
+
+3. Verify the extension is working:
+   - Click the GhostHub icon in your Chrome toolbar
+   - Check the "API Status" section
+   - Both APIs should show "✓ Available"
+
+4. If APIs are not available:
+   - Navigate to `chrome://flags/`
+   - Search for "Prompt API for Gemini Nano" and enable it
+   - Search for "Summarization API for Gemini Nano" and enable it
+   - Restart Chrome
+
+### Testing
+
+Open `test.html` in your browser to test the functionality manually, or visit Slack/Discord/WhatsApp Web to see the extension in action.
+
+For detailed development instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).
+
+---
+
+## 📚 Documentation
+
+- **[IMPLEMENTATION.md](IMPLEMENTATION.md)** - Technical implementation details and API usage
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Developer guide and setup instructions
+- **[SUMMARY.md](SUMMARY.md)** - Complete implementation summary
+
+---
+
+## ✨ Current Implementation Status
+
+### ✅ Implemented Features
+
+- **Prompt API Integration** - Message classification (bug, feature, PR mention)
+- **Summarizer API Integration** - Multi-message thread summarization
+- **IndexedDB Storage** - Persistent storage for all AI outputs
+- **Background Service Worker** - Message processing and routing
+- **Content Scripts** - Slack monitoring (Discord/WhatsApp placeholders ready)
+- **Popup Interface** - View and manage classifications, summaries, and issue drafts
+- **Privacy-First Architecture** - All processing happens on-device
+
+### 🚧 Planned Features
+
+- Writer API integration for polishing descriptions
+- Proofreader API for grammar checking
+- Multimodal API for screenshot analysis
+- Direct GitHub API integration for issue creation
+- Enhanced Discord and WhatsApp support
+
+---
 
