@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostHub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      min-height: 500px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+    }
+
+    .header {
+      background: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .header p {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.secondary {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .draft-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .draft-item {
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .draft-item:hover {
+      background: #f9f9f9;
+      border-color: #667eea;
+    }
+
+    .draft-item h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .draft-item p {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .draft-item .labels {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .label {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #667eea;
+      color: white;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .status {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>👻 GhostHub</h1>
+    <p>Turn chat chaos into GitHub issues</p>
+  </div>
+
+  <div class="container">
+    <!-- Status Messages -->
+    <div id="status" class="status hidden"></div>
+
+    <!-- Configuration Section -->
+    <div class="section" id="configSection">
+      <h2>GitHub Configuration</h2>
+      <div class="form-group">
+        <label for="githubOwner">Repository Owner</label>
+        <input type="text" id="githubOwner" placeholder="username or org">
+      </div>
+      <div class="form-group">
+        <label for="githubRepo">Repository Name</label>
+        <input type="text" id="githubRepo" placeholder="repository-name">
+      </div>
+      <div class="form-group">
+        <label for="githubToken">Personal Access Token</label>
+        <input type="password" id="githubToken" placeholder="ghp_...">
+      </div>
+      <button id="saveConfig">Save Configuration</button>
+    </div>
+
+    <!-- Drafts Section -->
+    <div class="section" id="draftsSection">
+      <h2>Draft Issues</h2>
+      <div id="draftList" class="draft-list">
+        <div class="empty-state">
+          <p>No draft issues yet</p>
+          <p>Monitor chats and click "Create Issue" to get started</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

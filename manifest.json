@@ -30,7 +30,12 @@
         "https://app.slack.com/*",
         "https://*.slack.com/*"
       ],
-      "js": ["content-scripts/slack.js"],
+      "js": [
+        "utils/multimodal-ai.js",
+        "utils/image-detector.js",
+        "utils/message-analyzer.js",
+        "content-scripts/slack.js"
+      ],
       "css": ["content-scripts/slack.css"],
       "run_at": "document_idle"
     },
@@ -39,7 +44,12 @@
         "https://discord.com/*",
         "https://*.discord.com/*"
       ],
-      "js": ["content-scripts/discord.js"],
+      "js": [
+        "utils/multimodal-ai.js",
+        "utils/image-detector.js",
+        "utils/message-analyzer.js",
+        "content-scripts/discord.js"
+      ],
       "css": ["content-scripts/discord.css"],
       "run_at": "document_idle"
     },
@@ -47,7 +57,12 @@
       "matches": [
         "https://web.whatsapp.com/*"
       ],
-      "js": ["content-scripts/whatsapp.js"],
+      "js": [
+        "utils/multimodal-ai.js",
+        "utils/image-detector.js",
+        "utils/message-analyzer.js",
+        "content-scripts/whatsapp.js"
+      ],
       "css": ["content-scripts/whatsapp.css"],
       "run_at": "document_idle"
     }

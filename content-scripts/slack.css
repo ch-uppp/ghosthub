@@ -1,0 +1,43 @@
+/* GhostHub Slack Styles */
+
+.ghosthub-create-issue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ghosthub-notification {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+/* Highlight processed images */
+img[data-ghosthub-processed="true"] {
+  border: 2px solid rgba(67, 160, 71, 0.3);
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+img[data-ghosthub-processed="true"]:hover {
+  border-color: rgba(67, 160, 71, 0.6);
+}
