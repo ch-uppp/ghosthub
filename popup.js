@@ -29,7 +29,7 @@ const elements = {
   saveLabelsBtn: document.getElementById('save-labels-btn'),
   labelsSuccess: document.getElementById('labels-success'),
   
-  // Assignee
+  // Issue Assignment Settings
   assigneeSection: document.getElementById('assignee-section'),
   autoAssignToggle: document.getElementById('auto-assign-toggle'),
   saveAssigneeBtn: document.getElementById('save-assignee-btn'),
@@ -202,8 +202,8 @@ async function loadRepositories() {
       }
       
       // Load saved auto-assign setting
-      if (settings.success && settings.settings.autoAssignCopilot !== undefined) {
-        elements.autoAssignToggle.checked = settings.settings.autoAssignCopilot;
+      if (settings.success) {
+        elements.autoAssignToggle.checked = settings.settings.autoAssignCopilot || false;
       }
     } else {
       showError(elements.repoError, response.error || 'Failed to load repositories');

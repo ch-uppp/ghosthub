@@ -227,11 +227,9 @@ async function createIssue(issueData) {
     }
     
     // Check if auto-assign Copilot is enabled
-    if (!issueData.assignees || issueData.assignees.length === 0) {
-      const autoAssign = await Storage.getAutoAssignCopilot();
-      if (autoAssign) {
-        issueData.assignees = ['copilot'];
-      }
+    const autoAssign = await Storage.getAutoAssignCopilot();
+    if (autoAssign && (!issueData.assignees || issueData.assignees.length === 0)) {
+      issueData.assignees = ['copilot'];
     }
     
     const issue = await githubAPI.createIssue(owner, repo, issueData);
