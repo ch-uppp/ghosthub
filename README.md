@@ -85,3 +85,32 @@ chrome.runtime.sendMessage({
 See [GITHUB_API.md](./GITHUB_API.md) for complete documentation.
 
 ---
+
+## 🌐 WhatsApp GitHub Bot Integration
+
+GhostHub now includes a WhatsApp-to-GitHub bot that allows teams to create GitHub issues directly from WhatsApp messages!
+
+### Features
+- 📱 **Multi-Client Support**: Each client can configure their own GitHub repository
+- 🔐 **Access Control**: Configure who can create issues (all members, specific members, or just you)
+- 🎯 **Custom Keywords**: Define custom trigger words beyond the defaults
+- ✅ **WhatsApp Confirmations**: Toggle confirmation messages in WhatsApp
+- 🤖 **GitHub Copilot Integration**: Automatically assign issues to GitHub Copilot
+
+### Deployment
+
+The landing page and API can be deployed to Vercel for easy onboarding:
+
+1. **Quick Deploy**: See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for complete instructions
+2. **Landing Page**: Available at `/landing-page` - React-based configuration form
+3. **API Endpoint**: Serverless function at `/api/onboard` for bot configuration
+
+```bash
+# Quick start with Vercel CLI
+npm install -g vercel
+vercel --prod
+```
+
+For detailed deployment instructions, see [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md).
+
+---
