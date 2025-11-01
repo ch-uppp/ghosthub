@@ -20,9 +20,11 @@ This guide explains how to deploy GhostHub's landing page to Vercel.
 
 Vercel will automatically detect the React app and configure:
 - **Framework Preset**: Create React App
-- **Build Command**: `npm run build`
+- **Build Command**: `npm run vercel-build` (automatically used by Vercel)
 - **Output Directory**: `build`
 - **Install Command**: `npm install`
+
+Note: The `vercel-build` script is defined in `package.json` and will be used automatically by Vercel when deploying.
 
 ### 3. Set Environment Variables
 
