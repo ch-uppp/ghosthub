@@ -68,6 +68,9 @@ async function handleMessage(message, sender) {
     case 'saveDefaultLabels':
       return await saveDefaultLabels(message.labels);
     
+    case 'saveAutoAssignCopilot':
+      return await saveAutoAssignCopilot(message.enabled);
+    
     default:
       throw new Error(`Unknown action: ${message.action}`);
   }
@@ -223,6 +226,14 @@ async function createIssue(issueData) {
       issueData.labels = await Storage.getDefaultLabels();
     }
     
+    // Check if auto-assign Copilot is enabled
+    if (!issueData.assignees || issueData.assignees.length === 0) {
+      const autoAssign = await Storage.getAutoAssignCopilot();
+      if (autoAssign) {
+        issueData.assignees = ['copilot'];
+      }
+    }
+    
     const issue = await githubAPI.createIssue(owner, repo, issueData);
     
     return {
@@ -280,6 +291,23 @@ async function getLabels(owner, repo) {
 async function saveDefaultLabels(labels) {
   try {
     await Storage.saveDefaultLabels(labels);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+/**
+ * Save auto-assign Copilot setting
+ * @param {boolean} enabled - Whether to auto-assign Copilot
+ * @returns {Promise<Object>} Save result
+ */
+async function saveAutoAssignCopilot(enabled) {
+  try {
+    await Storage.saveAutoAssignCopilot(enabled);
     return { success: true };
   } catch (error) {
     return {
