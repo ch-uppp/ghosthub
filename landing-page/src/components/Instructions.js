@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const Instructions = ({ apiResponse }) => {
-  const [isTestingExpanded, setIsTestingExpanded] = useState(false);
 
   const defaultInstructions = [
     {
@@ -21,16 +20,6 @@ const Instructions = ({ apiResponse }) => {
       content: 'The bot detects keywords like "bug", "issue", "error", "feature", "request", "enhancement" and your custom keywords to create issues automatically.'
     }
   ];
-
-  const exampleCurlCommand = `curl -X POST https://runtime.codewords.ai/run/whatsapp_github_issue_bot_multi_ef3a9abf/ \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "phone_number": "+447401234567",
-    "github_repo": "owner/repository",
-    "allowed_phone_numbers": null,
-    "custom_keywords": ["urgent", "critical"],
-    "enable_confirmations": true
-  }'`;
 
   return (
     <div className="space-y-8">
@@ -54,34 +43,6 @@ const Instructions = ({ apiResponse }) => {
           <p className="text-github-dark whitespace-pre-line">{apiResponse.instructions}</p>
         </div>
       )}
-
-      {/* Testing Section */}
-      <div className="border border-github-border rounded-md" data-testid="testing-section">
-        <button
-          onClick={() => setIsTestingExpanded(!isTestingExpanded)}
-          className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
-          data-testid="testing-toggle"
-        >
-          <span className="font-semibold text-github-dark">Testing the API Manually</span>
-          <svg
-            className={`w-5 h-5 transform transition-transform ${isTestingExpanded ? 'rotate-180' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-        
-        {isTestingExpanded && (
-          <div className="px-4 pb-4 border-t border-github-border">
-            <p className="text-github-muted mb-3 mt-3">You can test the API manually using curl:</p>
-            <pre className="bg-gray-900 text-green-400 p-4 rounded-md overflow-x-auto font-mono text-sm" data-testid="curl-example">
-              {exampleCurlCommand}
-            </pre>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
