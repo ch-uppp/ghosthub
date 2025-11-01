@@ -21,8 +21,6 @@ const Instructions = ({ apiResponse }) => {
     }
   ];
 
-
-
   return (
     <div className="space-y-8">
       {/* Setup Instructions */}
