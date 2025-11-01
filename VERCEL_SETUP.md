@@ -28,7 +28,9 @@ This guide walks you through deploying the GhostHub landing page and API to Verc
 
    | Name | Value | Environments |
    |------|-------|--------------|
-   | `CODEWORDS_API_KEY` | `cwk-c6acb71734fcc532ca384fcebad6a28c1dd5179fe1af17784f224e4dcba39b78` | ✅ Production ✅ Preview ✅ Development |
+   | `CODEWORDS_API_KEY` | `<your-codewords-api-key>` | ✅ Production ✅ Preview ✅ Development |
+
+   > **Note**: Get your API key from the issue description or your CodeWords account
 
 3. Make sure to check all three environment checkboxes
 
@@ -180,7 +182,7 @@ npm install
 cd ..
 
 # Set environment variable (create .env file)
-echo "CODEWORDS_API_KEY=cwk-c6acb71734fcc532ca384fcebad6a28c1dd5179fe1af17784f224e4dcba39b78" > .env
+echo "CODEWORDS_API_KEY=<your-codewords-api-key>" > .env
 
 # Run Vercel dev server
 vercel dev
