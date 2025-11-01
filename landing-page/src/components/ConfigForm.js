@@ -8,7 +8,8 @@ const ConfigForm = ({ onSuccess, onError }) => {
     permission_type: 'all',
     specific_members: [],
     custom_keywords: [],
-    enable_confirmations: true
+    enable_confirmations: true,
+    trigger_copilot: false
   });
 
   const [specificMemberInput, setSpecificMemberInput] = useState('');
@@ -107,16 +108,17 @@ const ConfigForm = ({ onSuccess, onError }) => {
 
     // Build API payload
     const payload = {
-      phone_number: formData.phone_number,
-      github_repo: formData.github_repo,
-      allowed_phone_numbers: formData.permission_type === 'specific' ? formData.specific_members : null,
-      custom_keywords: formData.custom_keywords.length > 0 ? formData.custom_keywords : [],
-      enable_confirmations: formData.enable_confirmations
+      phoneNumber: formData.phone_number,
+      githubRepo: formData.github_repo,
+      allowedPhones: formData.permission_type === 'specific' ? formData.specific_members : null,
+      customKeywords: formData.custom_keywords.length > 0 ? formData.custom_keywords : [],
+      enableConfirmations: formData.enable_confirmations,
+      triggerCopilot: formData.trigger_copilot
     };
 
     try {
       const response = await axios.post(
-        'https://runtime.codewords.ai/run/whatsapp_github_issue_bot_multi_ef3a9abf/',
+        '/api/onboard',
         payload,
         {
           headers: {
@@ -331,6 +333,28 @@ const ConfigForm = ({ onSuccess, onError }) => {
             onChange={handleInputChange}
             className="sr-only peer"
             data-testid="confirmations-toggle"
+          />
+          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-github-accent"></div>
+        </label>
+      </div>
+
+      {/* GitHub Copilot Assignment */}
+      <div className="flex items-center justify-between p-4 border border-github-border rounded-md">
+        <div>
+          <label htmlFor="trigger_copilot" className="block text-sm font-semibold text-github-dark">
+            Assign issues to GitHub Copilot
+          </label>
+          <p className="text-sm text-github-muted">Automatically assign created issues to GitHub Copilot</p>
+        </div>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            id="trigger_copilot"
+            name="trigger_copilot"
+            checked={formData.trigger_copilot}
+            onChange={handleInputChange}
+            className="sr-only peer"
+            data-testid="copilot-toggle"
           />
           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-github-accent"></div>
         </label>
