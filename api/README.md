@@ -40,9 +40,9 @@ Onboards a new client to the WhatsApp GitHub Issue Bot.
 
 ## Environment Variables
 
-The API requires the following environment variable to be set in Vercel:
+The API requires the following environment variables to be set in Vercel:
 
-### CODEWORDS_API_KEY
+### CODEWORDS_API_KEY (Required)
 
 The API key for authenticating with the CodeWords Multi-Client Bot.
 
@@ -54,6 +54,18 @@ The API key for authenticating with the CodeWords Multi-Client Bot.
    - **Value:** `cwk-c6acb71734fcc532ca384fcebad6a28c1dd5179fe1af17784f224e4dcba39b78`
    - **Environments:** ✅ Production, ✅ Preview, ✅ Development
 4. Save and redeploy
+
+### ALLOWED_ORIGIN (Optional)
+
+Restricts CORS to specific domains for enhanced security.
+
+**Setup in Vercel:**
+- **Name:** `ALLOWED_ORIGIN`
+- **Value:** `https://your-domain.vercel.app` (your production domain)
+- **Default:** `*` (allows all origins if not set)
+- **Environments:** ✅ Production (recommended), ⬜ Preview, ⬜ Development
+
+**Note:** For production, it's recommended to set this to your actual domain to prevent unauthorized cross-origin requests.
 
 ## Testing
 
@@ -95,7 +107,15 @@ The API is automatically deployed to Vercel when you push to the repository. Mak
 
 ## CORS Configuration
 
-The API endpoint has CORS enabled to allow requests from any origin (`Access-Control-Allow-Origin: *`). If you need to restrict this to specific domains, update the CORS headers in `api/onboard.js`.
+The API endpoint has CORS enabled. By default, it allows requests from any origin (`Access-Control-Allow-Origin: *`). 
+
+For production environments, you can restrict this to specific domains by setting the `ALLOWED_ORIGIN` environment variable:
+
+```bash
+ALLOWED_ORIGIN=https://your-domain.vercel.app
+```
+
+This enhances security by preventing unauthorized cross-origin requests from unknown domains.
 
 ## Security
 

@@ -32,12 +32,21 @@ This repository includes:
 
 3. **Set Environment Variables**
    - Go to **Settings** → **Environment Variables**
-   - Add the following variable:
+   - Add the following variables:
+     
+     **Required:**
      ```
      Name: CODEWORDS_API_KEY
      Value: cwk-c6acb71734fcc532ca384fcebad6a28c1dd5179fe1af17784f224e4dcba39b78
+     Environments: ✅ Production, ✅ Preview, ✅ Development
      ```
-   - Select environments: ✅ Production, ✅ Preview, ✅ Development
+     
+     **Optional (Recommended for Production):**
+     ```
+     Name: ALLOWED_ORIGIN
+     Value: https://your-project.vercel.app
+     Environments: ✅ Production
+     ```
    - Click **Save**
 
 4. **Deploy**
@@ -139,6 +148,7 @@ After deployment, your API will be available at:
 | Variable | Description | Required | Example |
 |----------|-------------|----------|---------|
 | `CODEWORDS_API_KEY` | API key for CodeWords Multi-Client Bot | Yes | `cwk-c6acb...` |
+| `ALLOWED_ORIGIN` | Restrict CORS to specific domain (security) | No | `https://your-domain.vercel.app` |
 
 ### Setting Environment Variables
 

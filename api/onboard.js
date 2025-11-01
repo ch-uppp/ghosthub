@@ -1,6 +1,7 @@
 export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS headers - using environment variable for allowed origins or default to all in development
+  const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -22,7 +23,7 @@ export default async function handler(req, res) {
     // Validate inputs
     if (!phoneNumber || !githubRepo) {
       return res.status(400).json({ 
-        error: 'phone_number and github_repo required' 
+        error: 'phoneNumber and githubRepo required' 
       });
     }
 
