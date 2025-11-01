@@ -29,21 +29,14 @@ The development server is currently running at:
 
 The built landing page is a static site that can be deployed to:
 
-1. **Netlify**
-   ```bash
-   # Drag and drop /app/landing-page/build/ folder to Netlify
-   # OR use Netlify CLI
-   cd /app/landing-page
-   netlify deploy --prod --dir=build
-   ```
-
-2. **Vercel**
+1. **Vercel** (Recommended)
    ```bash
    cd /app/landing-page
    vercel --prod
    ```
+   See [VERCEL_DEPLOYMENT.md](../VERCEL_DEPLOYMENT.md) for detailed instructions.
 
-3. **GitHub Pages**
+2. **GitHub Pages**
    ```bash
    # Add to package.json:
    # "homepage": "https://ch-uppp.github.io/ghosthub"
@@ -58,14 +51,14 @@ The built landing page is a static site that can be deployed to:
    yarn deploy
    ```
 
-4. **AWS S3 + CloudFront**
+3. **AWS S3 + CloudFront**
    ```bash
    # Upload build/ folder to S3 bucket
    # Configure bucket for static website hosting
    # Add CloudFront distribution for HTTPS
    ```
 
-5. **Firebase Hosting**
+4. **Firebase Hosting**
    ```bash
    cd /app/landing-page
    firebase init hosting
@@ -186,15 +179,15 @@ serve -s build -l 3000
 After deploying to a hosting provider:
 
 1. Update DNS records to point to hosting provider
-2. Example for Netlify:
+2. Example for Vercel:
    ```
    Type: A
    Name: @
-   Value: 75.2.60.5
+   Value: 76.76.21.21
    
    Type: CNAME
    Name: www
-   Value: your-site.netlify.app
+   Value: cname.vercel-dns.com
    ```
 
 ## 📱 Subdomain Setup (Optional)
@@ -243,26 +236,26 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
-          cache-dependency-path: landing-page/yarn.lock
+          cache: 'npm'
+          cache-dependency-path: landing-page/package-lock.json
       
       - name: Install dependencies
         run: |
           cd landing-page
-          yarn install --frozen-lockfile
+          npm install
       
       - name: Build
         run: |
           cd landing-page
-          yarn build
+          npm run build
       
-      - name: Deploy to Netlify
-        uses: netlify/actions/cli@master
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
         with:
-          args: deploy --prod --dir=landing-page/build
-        env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
 ```
 
 ## 📞 Support & Maintenance
@@ -292,18 +285,11 @@ To change colors or design:
 
 ## 🎉 Quick Deploy Commands
 
-### Fastest Route (Netlify Drop)
+### Fastest Route (Vercel)
 ```bash
 cd /app/landing-page
-yarn build
-# Then drag /app/landing-page/build/ to app.netlify.com/drop
-```
-
-### Automated Deploy (Netlify CLI)
-```bash
-cd /app/landing-page
-yarn build
-netlify deploy --prod --dir=build
+npm run build
+vercel --prod
 ```
 
 ### GitHub Pages Deploy
@@ -338,8 +324,8 @@ After deployment, verify:
 
 ### Issue: 404 on refresh
 **Solution**: Configure hosting provider for SPA (single-page app) routing
-- Netlify: Add `_redirects` file with `/* /index.html 200`
-- Vercel: Add `vercel.json` with rewrites configuration
+- Vercel: Automatically handled (no configuration needed)
+- Other platforms: May need configuration (e.g., redirects file)
 
 ### Issue: API calls failing
 **Solution**: Check CORS configuration on API endpoint
@@ -358,4 +344,4 @@ After deployment, verify:
 
 **Current Status**: ✅ Ready for Production Deployment
 
-**Recommended Next Step**: Deploy to Netlify using drag-and-drop (fastest method)
+**Recommended Next Step**: Deploy to Vercel (fastest and most reliable method). See [VERCEL_DEPLOYMENT.md](../VERCEL_DEPLOYMENT.md) for detailed instructions.
