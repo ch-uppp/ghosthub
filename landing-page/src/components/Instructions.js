@@ -9,8 +9,8 @@ const Instructions = ({ apiResponse }) => {
       content: 'Save the bot number provided in the confirmation to your contacts and add it to your WhatsApp group.'
     },
     {
-      title: 'Mention the Bot',
-      content: 'In your WhatsApp group, mention @GhostHub or tag the bot when reporting a bug or requesting a feature.'
+      title: 'Using the Bot',
+      content: 'The bot automatically detects keywords in messages. You don\'t need to @mention the bot. However, if the user posting isn\'t approved to create issues, another team member will need to @mention the bot for it to be picked up.'
     },
     {
       title: 'Wait for Confirmation',
