@@ -74,7 +74,7 @@ All required fields with proper validation:
 ### 6. **Instructions Section**
 Four-step setup guide:
 1. Add the Bot to WhatsApp
-2. Mention the Bot in groups
+2. Using the Bot (automatic keyword detection without @mention requirement)
 3. Wait for Confirmation
 4. Default Keywords information
 
