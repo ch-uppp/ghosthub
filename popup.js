@@ -29,6 +29,12 @@ const elements = {
   saveLabelsBtn: document.getElementById('save-labels-btn'),
   labelsSuccess: document.getElementById('labels-success'),
   
+  // Issue Assignment Settings
+  assigneeSection: document.getElementById('assignee-section'),
+  autoAssignToggle: document.getElementById('auto-assign-toggle'),
+  saveAssigneeBtn: document.getElementById('save-assignee-btn'),
+  assigneeSuccess: document.getElementById('assignee-success'),
+  
   // Test
   testSection: document.getElementById('test-section'),
   testTitle: document.getElementById('test-title'),
@@ -99,6 +105,7 @@ function setupEventListeners() {
   elements.disconnectBtn.addEventListener('click', handleDisconnect);
   elements.saveRepoBtn.addEventListener('click', handleSaveRepository);
   elements.saveLabelsBtn.addEventListener('click', handleSaveLabels);
+  elements.saveAssigneeBtn.addEventListener('click', handleSaveAssignee);
   elements.createTestIssueBtn.addEventListener('click', handleCreateTestIssue);
   
   // Allow Enter key to verify token
@@ -193,6 +200,11 @@ async function loadRepositories() {
       if (settings.success && settings.settings.defaultLabels) {
         elements.labelsInput.value = settings.settings.defaultLabels.join(', ');
       }
+      
+      // Load saved auto-assign setting
+      if (settings.success) {
+        elements.autoAssignToggle.checked = settings.settings.autoAssignCopilot || false;
+      }
     } else {
       showError(elements.repoError, response.error || 'Failed to load repositories');
     }
@@ -286,6 +298,33 @@ async function handleSaveLabels() {
 }
 
 /**
+ * Handle save assignee button click
+ */
+async function handleSaveAssignee() {
+  const autoAssign = elements.autoAssignToggle.checked;
+  
+  setLoading(elements.saveAssigneeBtn, true);
+  hideMessage(elements.assigneeSuccess);
+  
+  try {
+    const response = await sendMessage({ 
+      action: 'saveAutoAssignCopilot', 
+      enabled: autoAssign 
+    });
+    
+    if (response.success) {
+      showSuccess(elements.assigneeSuccess, 'Assignment setting saved successfully!');
+    } else {
+      showError(elements.assigneeSuccess, response.error || 'Failed to save assignment setting');
+    }
+  } catch (error) {
+    showError(elements.assigneeSuccess, error.message);
+  } finally {
+    setLoading(elements.saveAssigneeBtn, false);
+  }
+}
+
+/**
  * Handle create test issue button click
  */
 async function handleCreateTestIssue() {
@@ -335,6 +374,7 @@ function showAuthenticated(user) {
   elements.authenticated.style.display = 'block';
   elements.repoSection.style.display = 'block';
   elements.labelsSection.style.display = 'block';
+  elements.assigneeSection.style.display = 'block';
   elements.testSection.style.display = 'block';
   
   elements.userAvatar.src = user.avatar_url;
@@ -352,6 +392,7 @@ function showNotAuthenticated() {
   elements.authenticated.style.display = 'none';
   elements.repoSection.style.display = 'none';
   elements.labelsSection.style.display = 'none';
+  elements.assigneeSection.style.display = 'none';
   elements.testSection.style.display = 'none';
 }
 

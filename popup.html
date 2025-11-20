@@ -93,6 +93,29 @@
       </div>
     </section>
 
+    <!-- Auto-Assign Section -->
+    <section id="assignee-section" class="section" style="display: none;">
+      <h2>Issue Assignment</h2>
+      
+      <div class="form-group">
+        <label class="toggle-label">
+          <input 
+            type="checkbox" 
+            id="auto-assign-toggle" 
+            class="toggle-checkbox"
+          >
+          <span class="toggle-text">Auto-assign issues to Copilot</span>
+        </label>
+        <small class="help-text">When enabled, new issues will be automatically assigned to @copilot.</small>
+      </div>
+
+      <button id="save-assignee-btn" class="btn btn-primary">Save Assignment Setting</button>
+      
+      <div id="assignee-success" class="success-message" style="display: none;">
+        Assignment setting saved successfully!
+      </div>
+    </section>
+
     <!-- Test Issue Section -->
     <section id="test-section" class="section" style="display: none;">
       <h2>Test Integration</h2>

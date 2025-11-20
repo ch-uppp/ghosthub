@@ -123,6 +123,39 @@ const Storage = {
   },
 
   /**
+   * Save auto-assign Copilot setting
+   * @param {boolean} enabled - Whether to auto-assign Copilot
+   * @returns {Promise<void>}
+   */
+  async saveAutoAssignCopilot(enabled) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.set({ autoAssignCopilot: enabled }, () => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+        } else {
+          resolve();
+        }
+      });
+    });
+  },
+
+  /**
+   * Get auto-assign Copilot setting
+   * @returns {Promise<boolean>} Whether to auto-assign Copilot
+   */
+  async getAutoAssignCopilot() {
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.get(['autoAssignCopilot'], (result) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+        } else {
+          resolve(result.autoAssignCopilot || false);
+        }
+      });
+    });
+  },
+
+  /**
    * Save all settings at once
    * @param {Object} settings - Settings object
    * @returns {Promise<void>}
